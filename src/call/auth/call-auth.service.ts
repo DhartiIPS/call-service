@@ -81,7 +81,7 @@ export class CallAuthService {
     }
 
     this.logger.log(
-      `[validateSocket] ✅ OK socket=${socket.id} userId=${payload.sub}`,
+      `[validateSocket]  OK socket=${socket.id} userId=${payload.sub}`,
     );
 
     return payload;
