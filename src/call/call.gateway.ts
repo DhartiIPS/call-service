@@ -8,10 +8,13 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { firstValueFrom, timeout } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 import { CallAuthService } from './auth/call-auth.service';
+import { AuthUser } from './interfaces/auth-user.interface';
+import { TypingDto } from './dto/typing.dto';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -434,6 +437,34 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
       candidate: data.candidate,
     });
   }
+
+    @SubscribeMessage('typing')
+    async typing(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() dto: TypingDto,
+    ) {
+      const user = client.data.user as AuthUser;
+      if (!dto.roomId && !dto.receiverId) {
+        throw new WsException('Either roomId or receiverId is required');
+      }
+  
+      if (dto.roomId) {
+        // Broadcast to everyone else in the room.
+        client.to(dto.roomId).emit('typing', {
+          roomId: dto.roomId,
+          userId: user.sub,
+          isTyping: dto.isTyping,
+        });
+      } else if (dto.receiverId) {
+        this.server.to(dto.receiverId).emit('typing', {
+          senderId: user.sub,
+          receiverId: dto.receiverId,
+          isTyping: dto.isTyping,
+        });
+      }
+  
+      return { ok: true };
+    }
 
   // ── call:end ───────────────────────────────────────────────────────────────
 
