@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatModule } from './chat/chat.module';
-import { Chat } from './chat/entity/chat.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CallModule } from './call/call.module';
+import { Call } from './call/entity/call.entity';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { AppService } from './app.service';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_NAME || 'hospital',
-      entities: [Chat],
+      entities: [Call],
       synchronize: false, 
       logging: false,
       autoLoadEntities: true,
@@ -34,7 +34,7 @@ import { AppService } from './app.service';
         },
       }),
     }),
-    ChatModule,
+    CallModule,
   ],
   
   controllers: [AppController],
