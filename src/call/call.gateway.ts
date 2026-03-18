@@ -316,8 +316,9 @@ export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
       .subscribe({ error: (e) => this.logger.warn(`accept_call_by_room: ${e}`) });
 
     this.server.to(record.callerId).emit('call:accepted', {
-      roomId:   data.roomId,
-      byUserId: receiverId,
+      roomId:    data.roomId,
+      byUserId:  receiverId,
+      callType:  record.callType,
     });
 
     this.logger.log(`[respond] room=${data.roomId} accepted by receiverId=${receiverId}`);
