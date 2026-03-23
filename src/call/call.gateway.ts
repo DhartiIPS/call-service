@@ -39,7 +39,24 @@ const RING_TIMEOUT_MS = 30_000;
 
 @WebSocketGateway({
   namespace: '/call',
-  cors: { origin: '*', credentials: true },
+  transports: ['polling', 'websocket'],
+  cors: {
+    origin: [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'https://frontend-snowy-six-67.vercel.app',
+      /\.ngrok-free\.app$/,
+      /\.ngrok\.io$/,
+    ],
+    credentials: true,
+    methods: ['GET', 'POST'],
+    // ✅ FIX 2: allow ngrok browser-warning bypass header
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'ngrok-skip-browser-warning',
+    ],
+  },
 })
 export class CallGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(CallGateway.name);
