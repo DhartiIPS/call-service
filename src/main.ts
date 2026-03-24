@@ -11,6 +11,14 @@ async function bootstrap() {
   const tcpHost = configService.get<string>('CALL_TCP_HOST', '0.0.0.0');
   const tcpPort = configService.get<number>('CALL_TCP_PORT', 4008);
 
+  app.enableCors({
+    origin: [
+      'https://frontend-eight-beryl-k9n74eselr.vercel.app',
+      'http://localhost:3000',
+    ],
+    credentials: true,
+  });
+
   // Connect microservice
   app.connectMicroservice({
     transport: Transport.TCP,
@@ -24,7 +32,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   // HTTP server (REST APIs)
-  const httpPort = configService.get<number>('CALL_HTTP_PORT', 4009);
+  const httpPort = configService.get<number>('CALL_HTTP_PORT', 5010);
   await app.listen(httpPort);
 
   console.log(`🚀 Call HTTP server running on port ${httpPort}`);
